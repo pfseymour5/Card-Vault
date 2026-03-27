@@ -2,746 +2,340 @@
 
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="Card Vault" />
-  <meta name="theme-color" content="#0a0a0f" />
-  <title>Card Vault</title>
-
-  <!-- PWA icon (inline SVG as data URI) -->
-
-  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%230a0a0f'/%3E%3Crect x='30' y='45' width='75' height='100' rx='8' fill='%231a1a3a' stroke='%237070ff' stroke-width='2'/%3E%3Crect x='45' y='55' width='75' height='100' rx='8' fill='%2313131a' stroke='%234040c0' stroke-width='2'/%3E%3Ctext x='82' y='118' font-family='serif' font-size='36' font-weight='bold' fill='%237070ff' text-anchor='middle'%3EV%3C/text%3E%3C/svg%3E" />
-
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      background: #0a0a0f;
-      color: #f0f0f5;
-      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-      min-height: 100vh;
-      min-height: -webkit-fill-available;
-      overscroll-behavior: none;
-      -webkit-tap-highlight-color: transparent;
-    }
-    #root { min-height: 100vh; }
-    select, input, textarea, button {
-      font-family: inherit;
-      -webkit-appearance: none;
-      appearance: none;
-    }
-    /* Safe area padding for iPhone notch */
-    .safe-top    { padding-top: env(safe-area-inset-top); }
-    .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
-    @keyframes _sp { to { transform: rotate(360deg); } }
-  </style>
-
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Card Vault"/>
+<meta name="theme-color" content="#0a0a0f"/>
+<title>Card Vault</title>
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%230a0a0f'/%3E%3Crect x='30' y='45' width='75' height='100' rx='8' fill='%231a1a3a' stroke='%237070ff' stroke-width='2'/%3E%3Crect x='45' y='55' width='75' height='100' rx='8' fill='%2313131a' stroke='%234040c0' stroke-width='2'/%3E%3Ctext x='82' y='118' font-family='serif' font-size='36' font-weight='bold' fill='%237070ff' text-anchor='middle'%3EV%3C/text%3E%3C/svg%3E"/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:#0a0a0f;color:#f0f0f5;font-family:'DM Sans',-apple-system,sans-serif;min-height:100vh;overscroll-behavior:none}
+button,input,select,textarea{font-family:inherit;-webkit-appearance:none;appearance:none;cursor:pointer}
+input,textarea{cursor:text}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spin{width:28px;height:28px;border:3px solid #2a2a4a;border-top-color:#7070ff;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+.inp{width:100%;background:#0d0d14;border:1px solid #2a2a3a;border-radius:8px;padding:.55rem .75rem;color:#f0f0f5;font-size:.9rem;outline:none}
+.btn-primary{background:linear-gradient(135deg,#4040c0,#7070ff);border:none;color:#fff;border-radius:10px;padding:.65rem 1.25rem;font-weight:700;font-size:.85rem;box-shadow:0 4px 20px rgba(100,100,255,.3)}
+.btn-ghost{background:none;border:1px solid #3a3a5a;color:#aaa;border-radius:8px;padding:.5rem 1rem;font-size:.82rem}
+.chip{background:none;border:1px solid #2a2a3a;color:#666;border-radius:20px;padding:.25rem .8rem;font-size:.73rem}
+.chip.on{background:#1a1a3a;border-color:#7070ff;color:#a0a0ff;font-weight:700}
+.card{background:#13131a;border:1px solid #1e1e2e;border-radius:10px;padding:.9rem 1rem;margin-bottom:.5rem}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:100;display:flex;align-items:flex-start;justify-content:center;padding:1rem;overflow-y:auto}
+.modal{background:#13131a;border:1px solid #2a2a3a;border-radius:16px;padding:1.5rem;width:100%;max-width:560px;margin:auto}
+.field{margin-bottom:1rem}
+.lbl{display:block;color:#888;font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.3rem}
+.row4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:.5rem}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
+.stat-box{background:#0d0d14;border-radius:8px;padding:.65rem .8rem}
+select.inp option{background:#13131a;color:#f0f0f5}
+</style>
 </head>
 <body>
-  <div id="root"></div>
-
-  <!-- React + Babel -->
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
-
-  <script type="text/babel">
-    const { useState, useEffect } = React;
-
-    // ── API KEY SETUP ──────────────────────────────────────────────────────────
-    // To enable AI Price Lookup, add your Anthropic API key below.
-    // Get one free at: https://console.anthropic.com
-    // WARNING: Only use this on a personal device — never share the file with
-    // your key in it publicly.
-    const ANTHROPIC_API_KEY = ""; // <-- paste your key here e.g. "sk-ant-..."
-
-const GRADING_ORGS = ["Raw", "PSA", "BGS", "SGC", "CSG", "HGA", "CGC"];
-const CONDITIONS  = ["Poor","Fair","Good","VG","EX","EX-MT","NM","NM-MT","Mint","Gem Mint"];
-const CATEGORIES  = [
-  { id: "baseball",   label: "Baseball"   },
-  { id: "basketball", label: "Basketball" },
-  { id: "football",   label: "Football"   },
-  { id: "hockey",     label: "Hockey"     },
-  { id: "soccer",     label: "Soccer"     },
-  { id: "golf",       label: "Golf"       },
-  { id: "ufc",        label: "UFC / MMA"  },
-  { id: "wrestling",  label: "Wrestling"  },
-  { id: "pokemon",    label: "Pokemon"    },
-  { id: "starwars",   label: "Star Wars"  },
-  { id: "marvel",     label: "Marvel"     },
-  { id: "disney",     label: "Disney"     },
-  { id: "other",      label: "Other"      },
+<div id="app"></div>
+<script>
+const CATS=[
+  {id:"baseball",l:"Baseball"},{id:"basketball",l:"Basketball"},
+  {id:"football",l:"Football"},{id:"hockey",l:"Hockey"},
+  {id:"soccer",l:"Soccer"},{id:"golf",l:"Golf"},
+  {id:"ufc",l:"UFC/MMA"},{id:"wrestling",l:"Wrestling"},
+  {id:"pokemon",l:"Pokemon"},{id:"starwars",l:"Star Wars"},
+  {id:"marvel",l:"Marvel"},{id:"disney",l:"Disney"},
+  {id:"other",l:"Other"}
 ];
+const GRADES=["Raw","PSA","BGS","SGC","CSG","HGA","CGC"];
+const CONDS=["Poor","Fair","Good","VG","EX","EX-MT","NM","NM-MT","Mint","Gem Mint"];
+const USD=v=>new Intl.NumberFormat("en-US",{style:"currency",currency:"USD"}).format(v||0);
+const PCT=v=>(v>=0?"+":"")+v.toFixed(1)+"%";
+const esc=s=>String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+const catById=id=>CATS.find(c=>c.id===id);
 
-const fmtUSD  = (v) => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(v || 0);
-const fmtPct  = (v) => `${v >= 0 ? "+" : ""}${v.toFixed(1)}%`;
-const psaUrl  = (c) => `https://www.psacard.com/cert/${encodeURIComponent(c.trim())}`;
-const getCat  = (id) => CATEGORIES.find(c => c.id === id);
-
-// ─── Anthropic search loop (used only for price lookup) ───────────────────────
-async function claudeWithSearch(userPrompt, systemPrompt) {
-  const messages = [{ role: "user", content: userPrompt }];
-  const tools    = [{ type: "web_search_20250305", name: "web_search" }];
-  for (let i = 0; i < 8; i++) {
-    const body = { model: "claude-sonnet-4-20250514", max_tokens: 4096, tools, messages };
-    if (systemPrompt) body.system = systemPrompt;
-    if (!ANTHROPIC_API_KEY) throw new Error("Add your Anthropic API key to card-vault.html to enable AI Price Lookup.");
-    const res  = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": ANTHROPIC_API_KEY,
-        "anthropic-version": "2023-06-01",
-        "anthropic-dangerous-direct-browser-access": "true"
-      },
-      body: JSON.stringify(body),
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error?.message || "API error");
-    messages.push({ role: "assistant", content: data.content });
-    if (data.stop_reason === "end_turn")
-      return data.content.filter(b => b.type === "text").map(b => b.text).join("");
-    if (data.stop_reason === "tool_use") {
-      const results = data.content.filter(b => b.type === "tool_use")
-        .map(b => ({ type: "tool_result", tool_use_id: b.id, content: "No results. Answer from your own knowledge." }));
-      messages.push({ role: "user", content: results });
-    } else break;
-  }
-  throw new Error("No final response from AI");
-}
-
-function parseJSON(text) {
-  const s = text.trim();
-  try { return JSON.parse(s); } catch {}
-  let t = s;
-  const fb = "```json", fe = "```";
-  if (t.startsWith(fb)) t = t.slice(fb.length);
-  else if (t.startsWith(fe)) t = t.slice(fe.length);
-  if (t.endsWith(fe)) t = t.slice(0, t.length - fe.length);
-  t = t.trim();
-  try { return JSON.parse(t); } catch {}
-  const m = t.match(/\{[\s\S]*\}/);
-  if (m) { try { return JSON.parse(m[0]); } catch {} }
-  return null;
-}
-
-async function fetchCardPricing(card) {
-  const q = [card.player, card.year, card.set, card.variation,
-    card.cardNumber ? "#" + card.cardNumber : "",
-    card.gradingOrg !== "Raw" ? card.gradingOrg + " " + card.grade : ""].filter(Boolean).join(" ");
-  const system = "You are a card pricing expert. Search eBay sold listings. After searching respond with ONLY a JSON object.";
-  const prompt = `Search recent eBay sold prices for: "${q}"\nRespond with ONLY this JSON:\n{"cardName":"","summary":"","prices":[{"grade":"","value":0,"source":""}],"lastSale":{"price":0,"date":"","platform":""},"trend":"stable","confidence":"medium"}`;
-  const text   = await claudeWithSearch(prompt, system);
-  const result = parseJSON(text);
-  if (!result) throw new Error("Could not parse pricing data");
-  return result;
-}
-
-// ─── Styles ───────────────────────────────────────────────────────────────────
-const S = {
-  label: { color: "#888", fontSize: "0.72rem", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "0.3rem", display: "block" },
-  input: { width: "100%", background: "#0d0d14", border: "1px solid #2a2a3a", borderRadius: "8px", padding: "0.55rem 0.75rem", color: "#f0f0f5", fontSize: "0.88rem", outline: "none", boxSizing: "border-box" },
-  field: { marginBottom: "1rem" },
+let S={
+cards:JSON.parse(localStorage.getItem(“cv2”)||”[]”),
+tab:“fund”,search:””,catF:””,sortK:“player”,sortD:1,
+modal:null,form:null,lookCard:null,lookSt:“idle”,lookRes:null,lookErr:””
 };
 
-// ─── Spinner ──────────────────────────────────────────────────────────────────
-function Spinner({ size = 24, color = "#7070ff" }) {
-  return (
-    <>
-      <style>{`@keyframes _sp{to{transform:rotate(360deg)}}`}</style>
+function save(){try{localStorage.setItem(“cv2”,JSON.stringify(S.cards))}catch(e){}}
+function set(patch){Object.assign(S,patch);draw()}
+function blankForm(){return{id:null,player:””,year:””,set:””,cardNumber:””,variation:””,category:””,gradingOrg:“Raw”,grade:””,condition:“NM”,psaCert:””,purchasePrice:””,currentValue:””,notes:””};}
 
-```
-  <div style={{ width: size, height: size, border: "3px solid #2a2a4a", borderTopColor: color, borderRadius: "50%", animation: "_sp 0.75s linear infinite", flexShrink: 0 }} />
-</>
-```
-
-);
+function draw(){
+document.getElementById(“app”).innerHTML=page();
+bind();
 }
 
-// ─── Modal ────────────────────────────────────────────────────────────────────
-function Modal({ children, onClose, wide }) {
-return (
-<div style={{ position: “fixed”, inset: 0, background: “rgba(10,10,15,0.9)”, display: “flex”, alignItems: “center”, justifyContent: “center”, zIndex: 1000, backdropFilter: “blur(6px)”, padding: “1rem” }}
-onClick={e => e.target === e.currentTarget && onClose()}>
-<div style={{ background: “#13131a”, border: “1px solid #2a2a3a”, borderRadius: “16px”, padding: “2rem”, width: “100%”, maxWidth: wide ? “680px” : “560px”, maxHeight: “90vh”, overflowY: “auto”, boxShadow: “0 24px 80px rgba(0,0,0,0.7)” }}>
-{children}
+function page(){
+return `<div style="min-height:100vh"> <div style="border-bottom:1px solid #1a1a2a;padding:1.25rem 1.5rem;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(180deg,#0d0d16,#0a0a0f)"> <div> <div style="font-family:'Bebas Neue',cursive;font-size:1.8rem;letter-spacing:.1em;line-height:1">CARD VAULT</div> <div style="color:#555;font-size:.68rem;letter-spacing:.15em;text-transform:uppercase;margin-top:.1rem">${S.cards.length} card${S.cards.length!==1?"s":""}</div> </div> <button class="btn-primary" id="b-add">+ Add Card</button> </div> <div style="display:flex;border-bottom:1px solid #1a1a2a;padding:0 1.25rem"> ${["fund","cards","funds"].map(t=>`<button style=“background:none;border:none;border-bottom:2px solid ${S.tab===t?”#7070ff”:“transparent”};color:${S.tab===t?”#f0f0f5”:”#666”};padding:.85rem 1rem .65rem;font-weight:600;font-size:.8rem;letter-spacing:.05em;text-transform:uppercase;margin-bottom:-1px” data-tab=”${t}”>${t===“fund”?“📊 Overview”:t===“cards”?“🃏 Cards”:“📁 By Category”}</button>`).join(””)}
 </div>
+<div style="padding:1.25rem;max-width:900px;margin:0 auto">
+${S.tab===“fund”?tabFund():S.tab===“cards”?tabCards():tabFunds()}
 </div>
-);
+
+  </div>
+  ${S.modal?modalHTML():""}`;
 }
 
-// ─── Stat card ────────────────────────────────────────────────────────────────
-function StatCard({ label, value, sub, accent }) {
-return (
-<div style={{ background: “#13131a”, border: “1px solid “ + accent + “22”, borderRadius: “12px”, padding: “1.25rem 1.5rem”, borderLeft: “3px solid “ + accent }}>
-<div style={{ color: “#888”, fontSize: “0.7rem”, letterSpacing: “0.12em”, textTransform: “uppercase”, marginBottom: “0.4rem” }}>{label}</div>
-<div style={{ color: “#f0f0f5”, fontSize: “1.5rem”, fontFamily: “‘Bebas Neue’, cursive”, letterSpacing: “0.04em” }}>{value}</div>
-{sub && <div style={{ color: accent, fontSize: “0.75rem”, marginTop: “0.2rem” }}>{sub}</div>}
-</div>
-);
+function tabFund(){
+const cs=S.cards;
+if(!cs.length) return `<div style="text-align:center;padding:4rem 1rem;color:#444"><div style="font-size:3rem;margin-bottom:1rem">🃏</div><div style="font-family:'Bebas Neue',cursive;font-size:1.4rem;letter-spacing:.1em">YOUR VAULT IS EMPTY</div><div style="margin-top:.5rem;font-size:.85rem">Tap + Add Card to begin.</div></div>`;
+const inv=cs.reduce((s,c)=>s+(c.purchasePrice||0),0);
+const val=cs.reduce((s,c)=>s+(c.currentValue||0),0);
+const gain=val-inv;
+const pct=inv?(gain/inv)*100:0;
+const byG=[…cs].sort((a,b)=>((b.currentValue||0)-(b.purchasePrice||0))-((a.currentValue||0)-(a.purchasePrice||0)));
+const best=byG[0],worst=byG.length>1?byG[byG.length-1]:null;
+return `
+
+  <div class="row2" style="gap:.75rem;margin-bottom:1rem">
+    ${sc("Invested",USD(inv),"#7070ff")}${sc("Value",USD(val),"#60d0ff")}
+    ${sc("Gain/Loss",USD(gain)+(cs.length?`<br><span style="font-size:.75rem;color:${gain>=0?"#4ade80":"#f87171"}">${PCT(pct)}</span>`:""),gain>=0?"#4ade80":"#f87171")}
+    ${sc("Cards",String(cs.length),"#fbbf24")}
+  </div>
+  ${best?`<div class="row2" style="gap:.75rem">
+    <div style="background:#13131a;border:1px solid #1a3a1a;border-left:3px solid #4ade80;border-radius:12px;padding:1rem 1.1rem">
+      <div style="color:#4ade80;font-size:.67rem;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.35rem">Best Performer</div>
+      <div style="font-weight:700">${esc(best.player)}</div>
+      <div style="color:#666;font-size:.72rem">${esc([best.year,best.set].filter(Boolean).join(" · "))}</div>
+      <div style="color:#4ade80;font-weight:600;margin-top:.35rem">+${USD((best.currentValue||0)-(best.purchasePrice||0))}</div>
+    </div>
+    ${worst&&worst.id!==best.id?`<div style="background:#13131a;border:1px solid #3a1a1a;border-left:3px solid #f87171;border-radius:12px;padding:1rem 1.1rem">
+      <div style="color:#f87171;font-size:.67rem;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.35rem">Worst Performer</div>
+      <div style="font-weight:700">${esc(worst.player)}</div>
+      <div style="color:#666;font-size:.72rem">${esc([worst.year,worst.set].filter(Boolean).join(" · "))}</div>
+      <div style="color:#f87171;font-weight:600;margin-top:.35rem">${USD((worst.currentValue||0)-(worst.purchasePrice||0))}</div>
+    </div>`:""}
+  </div>`:""}`;
 }
 
-// ─── Price lookup panel ───────────────────────────────────────────────────────
-function PriceLookupPanel({ card, onApplyValue, onClose }) {
-const [status, setStatus] = useState(“loading”);
-const [result, setResult] = useState(null);
-const [error,  setError]  = useState(””);
-const [applied, setApplied] = useState(null);
+function sc(l,v,accent){
+return `<div style="background:#13131a;border:1px solid ${accent}22;border-left:3px solid ${accent};border-radius:12px;padding:1rem 1.1rem">
+<div style="color:#888;font-size:.67rem;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.3rem">${l}</div>
+<div style="font-family:'Bebas Neue',cursive;font-size:1.3rem;color:#f0f0f5">${v}</div>
 
-const lookup = async () => {
-setStatus(“loading”); setResult(null); setError(””);
-try { const d = await fetchCardPricing(card); setResult(d); setStatus(“done”); }
-catch (e) { setError(e.message); setStatus(“error”); }
+  </div>`;
+}
+
+function tabCards(){
+const usedCats=CATS.filter(c=>S.cards.some(x=>x.category===c.id));
+const fl=S.cards
+.filter(c=>(!S.search||[c.player,c.year,c.set,c.variation,c.cardNumber,c.psaCert].join(” “).toLowerCase().includes(S.search.toLowerCase()))&&(!S.catF||c.category===S.catF))
+.sort((a,b)=>{const av=a[S.sortK]??””,bv=b[S.sortK]??””;return typeof av===“string”?S.sortD*av.localeCompare(bv):S.sortD*(av-bv);});
+return ` ${usedCats.length?`<div style="display:flex;flex-wrap:wrap;gap:.35rem;margin-bottom:.85rem">
+<button class=“chip ${!S.catF?“on”:””}” data-cf=””>All</button>
+${usedCats.map(c=>`<button class="chip ${S.catF===c.id?"on":""}" data-cf="${c.id}">${esc(c.l)}</button>`).join(””)}
+
+  </div>`:""}
+  <div style="display:flex;gap:.75rem;margin-bottom:1rem;align-items:center">
+    <input class="inp" id="si" value="${esc(S.search)}" placeholder="Search player, set, year, variation…" style="flex:1"/>
+    <span style="color:#555;font-size:.73rem;white-space:nowrap">${fl.length} result${fl.length!==1?"s":""}</span>
+  </div>
+  ${fl.length?`
+    <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;gap:.4rem;padding:.25rem .8rem;margin-bottom:.25rem">
+      ${sb("player","Card")}${sb("purchasePrice","Cost")}${sb("currentValue","Value")}${sb("currentValue","Gain")}<div></div>
+    </div>
+    ${fl.map(cardRow).join("")}
+  `:`<div style="text-align:center;padding:3rem 1rem;color:#444">
+    <div style="font-size:2rem;margin-bottom:.5rem">🔍</div>
+    <div style="font-family:'Bebas Neue',cursive;font-size:1.2rem;letter-spacing:.1em">${S.search||S.catF?"NO MATCHING CARDS":"NO CARDS YET"}</div>
+  </div>`}`;
+}
+
+function sb(k,l){
+return `<button data-sk="${k}" style="background:none;border:none;color:${S.sortK===k?"#8888ff":"#666"};font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;padding:0;text-align:left">${l}${S.sortK===k?(S.sortD===1?" ↑":" ↓"):""}</button>`;
+}
+
+function cardRow(c){
+const gain=(c.currentValue||0)-(c.purchasePrice||0);
+const up=gain>=0;
+const isPSA=c.gradingOrg===“PSA”;
+const ct=catById(c.category);
+return `<div class="card"> <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;gap:.4rem;align-items:center"> <div> <div style="font-weight:600;font-size:.88rem">${esc(c.player||"—")}</div> <div style="color:#666;font-size:.7rem;margin-top:.1rem">${esc([c.year,c.set,c.cardNumber?"#"+c.cardNumber:""].filter(Boolean).join(" · "))}</div> <div style="display:flex;flex-wrap:wrap;gap:.2rem;margin-top:.2rem"> ${ct?`<span style="background:#0d0d1a;border:1px solid #3a3a6a;color:#7070aa;font-size:.6rem;padding:.08rem .4rem;border-radius:4px">${esc(ct.l)}</span>`:""} ${c.variation?`<span style="background:#14142a;border:1px solid #5050c044;color:#9090ee;font-size:.6rem;padding:.08rem .4rem;border-radius:4px;font-weight:600">${esc(c.variation)}</span>`:""} ${c.gradingOrg&&c.gradingOrg!=="Raw"?`<span style=“background:${isPSA?”#1a1424”:”#1a1a2e”};border:1px solid ${isPSA?”#c0802055”:”#4040a0”};color:${isPSA?”#e8a030”:”#8888ff”};font-size:.6rem;padding:.08rem .4rem;border-radius:4px;font-weight:700”>${esc(c.gradingOrg)} ${esc(c.grade)}${isPSA&&c.psaCert?” #”+esc(c.psaCert):””}</span>`:""} </div> </div> <div style="color:#aaa;font-size:.78rem">${USD(c.purchasePrice)}</div> <div style="font-weight:600;font-size:.78rem">${USD(c.currentValue)}</div> <div style="color:${up?"#4ade80":"#f87171"};font-weight:600;font-size:.78rem">${USD(gain)}</div> <div style="display:flex;flex-direction:column;gap:.25rem"> <button data-edit="${c.id}" style="background:none;border:1px solid #3a3a5a;color:#aaa;border-radius:6px;padding:.22rem .45rem;font-size:.7rem">Edit</button> <button data-del="${c.id}" style="background:none;border:1px solid #5a2a2a;color:#f87171;border-radius:6px;padding:.22rem .45rem;font-size:.7rem">✕</button> </div> </div> <div style="display:flex;gap:.4rem;margin-top:.6rem;flex-wrap:wrap;align-items:center"> <button data-lk="${c.id}" style="background:linear-gradient(135deg,#1a1a3a,#1e1e4a);border:1px solid #4040a055;color:#a0a0ff;border-radius:6px;padding:.22rem .65rem;font-size:.7rem;font-weight:700">🤖 AI Price Lookup</button> ${isPSA&&c.psaCert?`<a href="https://www.psacard.com/cert/${encodeURIComponent(c.psaCert.trim())}" target="_blank" style="color:#e8a030;border:1px solid #e8a03044;border-radius:6px;padding:.22rem .65rem;font-size:.7rem;font-weight:600;text-decoration:none">PSA ↗</a>`:""} ${c.valueUpdatedAt?`<span style="color:#3a3a4a;font-size:.63rem;margin-left:auto">Updated ${new Date(c.valueUpdatedAt).toLocaleDateString()}</span>`:””}
+</div>
+
+  </div>`;
+}
+
+function tabFunds(){
+const usedCats=CATS.filter(c=>S.cards.some(x=>x.category===c.id));
+const hasUncat=S.cards.some(c=>!c.category);
+if(!usedCats.length&&!hasUncat) return `<div style="text-align:center;padding:4rem 1rem;color:#444"><div style="font-size:3rem;margin-bottom:1rem">📁</div><div style="font-family:'Bebas Neue',cursive;font-size:1.3rem;letter-spacing:.1em">NO CATEGORIES YET</div><div style="margin-top:.5rem;font-size:.82rem">Assign categories to cards to see them as funds.</div></div>`;
+const groups=[
+…usedCats.map(c=>({label:c.l,cs:S.cards.filter(x=>x.category===c.id)})),
+…(hasUncat?[{label:“Uncategorized”,cs:S.cards.filter(x=>!x.category)}]:[])
+];
+return groups.map(({label,cs})=>{
+const inv=cs.reduce((s,c)=>s+(c.purchasePrice||0),0);
+const val=cs.reduce((s,c)=>s+(c.currentValue||0),0);
+const gain=val-inv;
+const pct=inv?(gain/inv)*100:0;
+const up=gain>=0;
+const best=[…cs].sort((a,b)=>((b.currentValue||0)-(b.purchasePrice||0))-((a.currentValue||0)-(a.purchasePrice||0)))[0];
+return `<div style="background:#13131a;border:1px solid #1e1e2e;border-radius:14px;padding:1.25rem;margin-bottom:1rem"> <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.85rem"> <div style="font-family:'Bebas Neue',cursive;font-size:1.2rem;letter-spacing:.08em">${esc(label)}</div> <div style="color:#555;font-size:.72rem">${cs.length} card${cs.length!==1?"s":""}</div> </div> <div class="row4" style="margin-bottom:${best?".85rem":"0"}"> ${fs("Invested",USD(inv),"#f0f0f5")}${fs("Value",USD(val),"#f0f0f5")} ${fs("Gain/Loss",USD(gain),up?"#4ade80":"#f87171")}${fs("Return",inv?PCT(pct):"—",up?"#4ade80":"#f87171")} </div> ${best?`<div style="display:flex;align-items:center;gap:.5rem;border-top:1px solid #1e1e2e;padding-top:.75rem">
+<span style="color:#555;font-size:.7rem">Best:</span>
+<span style="font-weight:600;font-size:.78rem">${esc(best.player)}</span>
+<span style="color:#4ade80;font-weight:600;font-size:.78rem;margin-left:auto">+${USD((best.currentValue||0)-(best.purchasePrice||0))}</span>
+</div>`:""} </div>`;
+}).join(””);
+}
+
+function fs(l,v,c){return `<div class="stat-box"><div style="color:#666;font-size:.6rem;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.2rem">${l}</div><div style="color:${c};font-size:.88rem;font-weight:700">${v}</div></div>`;}
+
+function modalHTML(){
+if(S.modal===“lookup”) return lookupHTML();
+const f=S.form||blankForm();
+const isPSA=f.gradingOrg===“PSA”;
+return `<div class="overlay" id="mo">
+
+  <div class="modal">
+    <h2 style="font-family:'Bebas Neue',cursive;font-size:1.6rem;letter-spacing:.08em;margin-bottom:1.25rem">${f.id?"Edit Card":"Add Card"}</h2>
+    <div class="field">
+      <label class="lbl">Category</label>
+      <div style="display:flex;flex-wrap:wrap;gap:.3rem;margin-top:.2rem">
+        ${CATS.map(c=>`<button class="cat-pill" data-cp="${c.id}" style="background:${f.category===c.id?"#1a1a3a":"none"};border:1px solid ${f.category===c.id?"#7070ff":"#2a2a3a"};color:${f.category===c.id?"#a0a0ff":"#666"};border-radius:20px;padding:.25rem .75rem;font-size:.73rem;font-weight:${f.category===c.id?"700":"400"}">${esc(c.l)}</button>`).join("")}
+      </div>
+    </div>
+    <div class="field"><label class="lbl">Player / Character</label><input class="inp" id="f-player" value="${esc(f.player)}" placeholder="e.g. Christian Moore, Charizard"/></div>
+    <div class="row2">
+      <div class="field"><label class="lbl">Year</label><input class="inp" id="f-year" value="${esc(f.year)}" placeholder="2024"/></div>
+      <div class="field"><label class="lbl">Card #</label><input class="inp" id="f-num" value="${esc(f.cardNumber)}" placeholder="e.g. CPACM"/></div>
+    </div>
+    <div class="field"><label class="lbl">Set / Series</label><input class="inp" id="f-set" value="${esc(f.set)}" placeholder="e.g. Bowman Draft, Base Set"/></div>
+    <div class="field">
+      <label class="lbl">Variation / Parallel</label>
+      <input class="inp" id="f-var" value="${esc(f.variation)}" placeholder="e.g. Magenta Sparkle Refractor, Holo, 1st Edition" style="border-color:${f.variation?"#5050c077":"#2a2a3a"}"/>
+    </div>
+    <div class="row2">
+      <div class="field"><label class="lbl">Grading Org</label><select class="inp" id="f-org">${GRADES.map(g=>`<option value="${g}" ${f.gradingOrg===g?"selected":""}>${g}</option>`).join("")}</select></div>
+      <div class="field"><label class="lbl">${isPSA?"Grade":"Condition"}</label>${isPSA?`<input class="inp" id="f-grade" value="${esc(f.grade)}" placeholder="e.g. 10"/>`:`<select class="inp" id="f-cond">${CONDS.map(c=>`<option value="${c}" ${f.condition===c?"selected":""}>${c}</option>`).join("")}</select>`}</div>
+    </div>
+    ${isPSA?`<div class="field">
+      <label class="lbl">PSA Cert #</label>
+      <div style="display:flex;gap:.5rem">
+        <input class="inp" id="f-cert" value="${esc(f.psaCert)}" placeholder="e.g. 116332079" maxlength="12" style="flex:1;border-color:${f.psaCert?"#e8a03066":"#2a2a3a"}"/>
+        ${f.psaCert?`<a href="https://www.psacard.com/cert/${encodeURIComponent(f.psaCert.trim())}" target="_blank" style="display:flex;align-items:center;background:#1a1424;border:1px solid #e8a03066;color:#e8a030;border-radius:8px;padding:0 .85rem;font-size:.8rem;font-weight:700;text-decoration:none;white-space:nowrap">Verify ↗</a>`:""}
+      </div>
+      <div style="color:#555;font-size:.67rem;margin-top:.25rem">From your PSA slab label.</div>
+    </div>`:""}
+    <div class="row2">
+      <div class="field"><label class="lbl">Purchase Price ($)</label><input class="inp" id="f-buy" type="number" min="0" step="0.01" value="${esc(f.purchasePrice)}" placeholder="0.00"/></div>
+      <div class="field"><label class="lbl">Current Value ($)</label><input class="inp" id="f-val" type="number" min="0" step="0.01" value="${esc(f.currentValue)}" placeholder="0.00"/></div>
+    </div>
+    <div class="field"><label class="lbl">Notes</label><textarea class="inp" id="f-notes" rows="2" placeholder="RC, auto, relic, 1st edition…" style="resize:vertical">${esc(f.notes)}</textarea></div>
+    <div style="display:flex;gap:.75rem;justify-content:flex-end;margin-top:.25rem">
+      <button class="btn-ghost" id="b-cancel">Cancel</button>
+      <button class="btn-primary" id="b-save">${f.id?"Save Changes":"Add to Collection"}</button>
+    </div>
+  </div>
+</div>`;
+}
+
+function lookupHTML(){
+const c=S.lookCard,st=S.lookSt,res=S.lookRes,err=S.lookErr;
+return `<div class="overlay" id="mo">
+
+  <div class="modal">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem">
+      <div><div style="font-family:'Bebas Neue',cursive;font-size:1.5rem;letter-spacing:.08em">Price Lookup</div><div style="color:#555;font-size:.7rem;margin-top:.1rem">AI · recent eBay sold data</div></div>
+      <button class="btn-ghost" id="b-cancel">Close</button>
+    </div>
+    <div style="background:#0d0d14;border-radius:8px;padding:.6rem .9rem;margin-bottom:1rem">
+      <div style="font-weight:600;font-size:.88rem">${esc(c.player)}</div>
+      <div style="color:#666;font-size:.7rem;margin-top:.1rem">${esc([c.year,c.set,c.variation,c.cardNumber?"#"+c.cardNumber:"",c.gradingOrg!=="Raw"?c.gradingOrg+" "+c.grade:""].filter(Boolean).join(" · "))}</div>
+    </div>
+    ${st==="loading"?`<div style="display:flex;flex-direction:column;align-items:center;gap:.75rem;padding:2rem 0"><div class="spin"></div><div style="color:#666;font-size:.8rem">Searching recent sold listings…</div></div>`:""}
+    ${st==="error"?`<div style="text-align:center;padding:1rem 0"><div style="color:#f87171;margin-bottom:.75rem;font-size:.85rem">${esc(err)}</div><button class="btn-ghost" id="b-retry">Try Again</button></div>`:""}
+    ${st==="done"&&res?`
+      <p style="color:#ccc;font-size:.82rem;line-height:1.5;margin-bottom:.85rem">${esc(res.summary||"")}</p>
+      <div style="display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:1rem">
+        ${res.trend?`<span style="color:${res.trend==="up"?"#4ade80":res.trend==="down"?"#f87171":"#fbbf24"};font-size:.72rem;font-weight:700">${res.trend==="up"?"↑":res.trend==="down"?"↓":"→"} ${res.trend.toUpperCase()}</span>`:""}
+        ${res.confidence?`<span style="color:${res.confidence==="high"?"#4ade80":res.confidence==="medium"?"#fbbf24":"#f87171"};font-size:.72rem">${res.confidence} confidence</span>`:""}
+      </div>
+      ${(res.prices||[]).map(p=>`<div style="display:flex;align-items:center;justify-content:space-between;background:#0d0d14;border:1px solid #1e1e2e;border-radius:8px;padding:.55rem .85rem;margin-bottom:.4rem">
+        <div><span style="font-weight:600;font-size:.88rem">${USD(p.value)}</span><span style="color:#555;font-size:.72rem;margin-left:.4rem">${esc(p.grade)}</span>${p.source?`<span style="color:#444;font-size:.67rem;margin-left:.3rem">· ${esc(p.source)}</span>`:""}</div>
+        <button data-apply="${p.value}" style="background:none;border:1px solid #3a3a5a;color:#aaa;border-radius:6px;padding:.22rem .65rem;font-size:.72rem;font-weight:600">Use This</button>
+      </div>`).join("")}
+      <button class="btn-ghost" id="b-retry" style="width:100%;margin-top:.5rem">↺ Refresh</button>
+    `:""}
+  </div>
+</div>`;
+}
+
+function bind(){
+document.querySelectorAll(”[data-tab]”).forEach(b=>b.addEventListener(“click”,()=>set({tab:b.dataset.tab})));
+const ba=document.getElementById(“b-add”);
+if(ba) ba.addEventListener(“click”,()=>set({modal:“form”,form:blankForm()}));
+const si=document.getElementById(“si”);
+if(si) si.addEventListener(“input”,e=>set({search:e.target.value}));
+document.querySelectorAll(”[data-cf]”).forEach(b=>b.addEventListener(“click”,()=>set({catF:b.dataset.cf})));
+document.querySelectorAll(”[data-sk]”).forEach(b=>b.addEventListener(“click”,()=>{const k=b.dataset.sk;set({sortK:k,sortD:S.sortK===k?-S.sortD:1});}));
+document.querySelectorAll(”[data-edit]”).forEach(b=>b.addEventListener(“click”,()=>{const c=S.cards.find(x=>x.id===b.dataset.edit);if(c)set({modal:“form”,form:{…c}});}));
+document.querySelectorAll(”[data-del]”).forEach(b=>b.addEventListener(“click”,()=>{if(confirm(“Remove this card?”)){S.cards=S.cards.filter(x=>x.id!==b.dataset.del);save();draw();}}));
+document.querySelectorAll(”[data-lk]”).forEach(b=>b.addEventListener(“click”,()=>{const c=S.cards.find(x=>x.id===b.dataset.lk);if(c){set({modal:“lookup”,lookCard:c,lookSt:“loading”,lookRes:null,lookErr:””});doLookup(c);}}));
+const mo=document.getElementById(“mo”);
+if(mo) mo.addEventListener(“click”,e=>{if(e.target===mo)set({modal:null,form:null});});
+const bc=document.getElementById(“b-cancel”);
+if(bc) bc.addEventListener(“click”,()=>set({modal:null,form:null}));
+const br=document.getElementById(“b-retry”);
+if(br) br.addEventListener(“click”,()=>{set({lookSt:“loading”,lookRes:null,lookErr:””});doLookup(S.lookCard);});
+document.querySelectorAll(”[data-apply]”).forEach(b=>b.addEventListener(“click”,()=>{
+const price=parseFloat(b.dataset.apply),id=S.lookCard?.id;
+if(id){S.cards=S.cards.map(c=>c.id===id?{…c,currentValue:price,valueUpdatedAt:new Date().toISOString()}:c);save();set({modal:null});}
+}));
+document.querySelectorAll(”[data-cp]”).forEach(b=>b.addEventListener(“click”,()=>{
+const cp=b.dataset.cp;S.form={…S.form,category:S.form?.category===cp?””:cp};draw();
+}));
+const fo=document.getElementById(“f-org”);
+if(fo) fo.addEventListener(“change”,e=>{S.form={…S.form,gradingOrg:e.target.value};draw();});
+const bs=document.getElementById(“b-save”);
+if(bs) bs.addEventListener(“click”,()=>{
+const f={
+…S.form,
+player:(document.getElementById(“f-player”)?.value||””).trim(),
+year:(document.getElementById(“f-year”)?.value||””).trim(),
+set:(document.getElementById(“f-set”)?.value||””).trim(),
+cardNumber:(document.getElementById(“f-num”)?.value||””).trim(),
+variation:(document.getElementById(“f-var”)?.value||””).trim(),
+gradingOrg:document.getElementById(“f-org”)?.value||“Raw”,
+grade:(document.getElementById(“f-grade”)?.value||””).trim(),
+condition:document.getElementById(“f-cond”)?.value||“NM”,
+psaCert:(document.getElementById(“f-cert”)?.value||””).replace(/\D/g,””),
+purchasePrice:parseFloat(document.getElementById(“f-buy”)?.value)||0,
+currentValue:parseFloat(document.getElementById(“f-val”)?.value)||0,
+notes:(document.getElementById(“f-notes”)?.value||””).trim(),
 };
-useEffect(() => { lookup(); }, []);
-
-const trendColor = { up: “#4ade80”, down: “#f87171”, stable: “#fbbf24” }[result?.trend] || “#888”;
-const trendIcon  = { up: “↑”, down: “↓”, stable: “→” }[result?.trend] || “”;
-const confColor  = { high: “#4ade80”, medium: “#fbbf24”, low: “#f87171” }[result?.confidence] || “#888”;
-
-return (
-<div style={{ background: “#0f0f18”, border: “1px solid #2a2a4a”, borderRadius: “14px”, padding: “1.25rem 1.5rem”, marginTop: “0.75rem” }}>
-<div style={{ display: “flex”, alignItems: “center”, justifyContent: “space-between”, marginBottom: “1rem” }}>
-<span style={{ color: “#a0a0ff”, fontSize: “0.78rem”, fontWeight: “700”, letterSpacing: “0.08em”, textTransform: “uppercase” }}>AI Price Lookup</span>
-{onClose && <button onClick={onClose} style={{ background: “none”, border: “none”, color: “#555”, cursor: “pointer”, fontSize: “1rem” }}>✕</button>}
-</div>
-<div style={{ background: “#13131a”, borderRadius: “8px”, padding: “0.6rem 0.9rem”, marginBottom: “1rem” }}>
-<div style={{ color: “#f0f0f5”, fontSize: “0.85rem”, fontWeight: “600” }}>{card.player}</div>
-<div style={{ color: “#666”, fontSize: “0.72rem”, marginTop: “0.1rem” }}>
-{[card.year, card.set, card.variation, card.cardNumber ? “#” + card.cardNumber : “”, card.gradingOrg !== “Raw” ? card.gradingOrg + “ “ + card.grade : “”].filter(Boolean).join(” · “)}
-</div>
-</div>
-{status === “loading” && <div style={{ display: “flex”, flexDirection: “column”, alignItems: “center”, gap: “0.75rem”, padding: “1.5rem 0” }}><Spinner size={28} /><div style={{ color: “#666”, fontSize: “0.8rem” }}>Searching recent sold listings…</div></div>}
-{status === “error”   && <div style={{ textAlign: “center”, padding: “1rem 0” }}><div style={{ color: “#f87171”, marginBottom: “0.75rem”, fontSize: “0.85rem” }}>{error}</div><button onClick={lookup} style={{ background: “none”, border: “1px solid #3a3a5a”, color: “#aaa”, borderRadius: “8px”, padding: “0.4rem 1rem”, cursor: “pointer”, fontSize: “0.8rem” }}>Try Again</button></div>}
-{status === “done” && result && (
-<div>
-<p style={{ color: “#ccc”, fontSize: “0.82rem”, lineHeight: 1.5, margin: “0 0 0.6rem” }}>{result.summary}</p>
-<div style={{ display: “flex”, gap: “0.75rem”, flexWrap: “wrap”, marginBottom: “1rem” }}>
-{result.trend      && <span style={{ color: trendColor, fontSize: “0.72rem”, fontWeight: “700” }}>{trendIcon} {result.trend.toUpperCase()}</span>}
-{result.confidence && <span style={{ color: confColor,  fontSize: “0.72rem” }}>{result.confidence} confidence</span>}
-{result.lastSale   && <span style={{ color: “#555”,     fontSize: “0.72rem” }}>Last: {fmtUSD(result.lastSale.price)} via {result.lastSale.platform}</span>}
-</div>
-{result.prices?.length > 0 && (
-<div style={{ display: “flex”, flexDirection: “column”, gap: “0.4rem”, marginBottom: “1rem” }}>
-{result.prices.map((p, i) => (
-<div key={i} style={{ display: “flex”, alignItems: “center”, justifyContent: “space-between”, background: applied === p.value ? “#1a2a1a” : “#13131a”, border: “1px solid “ + (applied === p.value ? “#4ade8055” : “#1e1e2e”), borderRadius: “8px”, padding: “0.55rem 0.85rem” }}>
-<div>
-<span style={{ color: “#f0f0f5”, fontSize: “0.85rem”, fontWeight: “600” }}>{fmtUSD(p.value)}</span>
-<span style={{ color: “#555”, fontSize: “0.72rem”, marginLeft: “0.5rem” }}>{p.grade}</span>
-{p.source && <span style={{ color: “#444”, fontSize: “0.68rem”, marginLeft: “0.35rem” }}>· {p.source}</span>}
-</div>
-<button onClick={() => { onApplyValue(p.value); setApplied(p.value); }}
-style={{ background: applied === p.value ? “#4ade8022” : “none”, border: “1px solid “ + (applied === p.value ? “#4ade80” : “#3a3a5a”), color: applied === p.value ? “#4ade80” : “#aaa”, borderRadius: “6px”, padding: “0.25rem 0.65rem”, cursor: “pointer”, fontSize: “0.72rem”, fontWeight: “600” }}>
-{applied === p.value ? “✓ Applied” : “Use This”}
-</button>
-</div>
-))}
-</div>
-)}
-<button onClick={lookup} style={{ background: “none”, border: “1px solid #2a2a4a”, color: “#666”, borderRadius: “7px”, padding: “0.35rem 0.85rem”, cursor: “pointer”, fontSize: “0.72rem”, width: “100%” }}>↺ Refresh</button>
-</div>
-)}
-</div>
-);
-}
-
-// ─── Price lookup modal ───────────────────────────────────────────────────────
-function PriceLookupModal({ card, onApplyValue, onClose }) {
-return (
-<Modal onClose={onClose} wide>
-<div style={{ display: “flex”, alignItems: “center”, justifyContent: “space-between”, marginBottom: “1.25rem” }}>
-<div>
-<div style={{ fontFamily: “‘Bebas Neue’, cursive”, fontSize: “1.6rem”, color: “#f0f0f5”, lineHeight: 1 }}>Price Lookup</div>
-<div style={{ color: “#555”, fontSize: “0.72rem”, marginTop: “0.2rem” }}>AI · searches recent eBay sold data</div>
-</div>
-<button onClick={onClose} style={{ background: “none”, border: “1px solid #3a3a5a”, color: “#aaa”, borderRadius: “8px”, padding: “0.4rem 0.8rem”, cursor: “pointer” }}>Close</button>
-</div>
-<PriceLookupPanel card={card} onApplyValue={price => { onApplyValue(card.id, price); onClose(); }} onClose={null} />
-</Modal>
-);
-}
-
-// ─── Card form ────────────────────────────────────────────────────────────────
-const EMPTY = { player: “”, year: “”, set: “”, cardNumber: “”, variation: “”, category: “”, gradingOrg: “Raw”, grade: “”, condition: “NM”, psaCert: “”, purchasePrice: “”, currentValue: “”, notes: “” };
-
-function CardForm({ initial, onSave, onCancel }) {
-const [form, setForm] = useState(initial ? { …EMPTY, …initial } : EMPTY);
-const [showLookup, setShowLookup] = useState(false);
-const set = (k, v) => setForm(f => ({ …f, [k]: v }));
-const isPSA     = form.gradingOrg === “PSA”;
-const canLookup = !!(form.player || form.set);
-
-const chip = (active) => ({
-background: active ? “#1a1a3a” : “none”,
-border: “1px solid “ + (active ? “#7070ff” : “#2a2a3a”),
-color: active ? “#a0a0ff” : “#666”,
-borderRadius: “20px”, padding: “0.28rem 0.8rem”,
-cursor: “pointer”, fontSize: “0.75rem”,
-fontWeight: active ? “700” : “400”,
+if(!f.player){alert(“Please enter a player or character name.”);return;}
+if(f.id){S.cards=S.cards.map(c=>c.id===f.id?f:c);}
+else{f.id=Date.now().toString();S.cards=[…S.cards,f];}
+save();set({modal:null,form:null});
 });
-
-return (
-<div>
-<h2 style={{ fontFamily: “‘Bebas Neue’, cursive”, fontSize: “1.8rem”, letterSpacing: “0.08em”, color: “#f0f0f5”, margin: “0 0 1.5rem” }}>
-{initial ? “Edit Card” : “Add Card”}
-</h2>
-
-```
-  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 1rem" }}>
-
-    {/* Category */}
-    <div style={{ ...S.field, gridColumn: "1 / -1" }}>
-      <label style={S.label}>Category</label>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem", marginTop: "0.25rem" }}>
-        {CATEGORIES.map(cat => (
-          <button key={cat.id} onClick={() => set("category", form.category === cat.id ? "" : cat.id)} style={chip(form.category === cat.id)}>
-            {cat.label}
-          </button>
-        ))}
-      </div>
-    </div>
-
-    {/* Player */}
-    <div style={{ ...S.field, gridColumn: "1 / -1" }}>
-      <label style={S.label}>Player / Character</label>
-      <input style={S.input} value={form.player} onChange={e => set("player", e.target.value)} placeholder="e.g. Christian Moore, Charizard, Luke Skywalker" />
-    </div>
-
-    {/* Year + Card # */}
-    <div style={S.field}>
-      <label style={S.label}>Year</label>
-      <input style={S.input} value={form.year} onChange={e => set("year", e.target.value)} placeholder="e.g. 2024" />
-    </div>
-    <div style={S.field}>
-      <label style={S.label}>Card #</label>
-      <input style={S.input} value={form.cardNumber} onChange={e => set("cardNumber", e.target.value)} placeholder="e.g. CPACM" />
-    </div>
-
-    {/* Set */}
-    <div style={{ ...S.field, gridColumn: "1 / -1" }}>
-      <label style={S.label}>Set / Series</label>
-      <input style={S.input} value={form.set} onChange={e => set("set", e.target.value)} placeholder="e.g. Bowman Draft, Base Set, The Mandalorian" />
-    </div>
-
-    {/* Variation */}
-    <div style={{ ...S.field, gridColumn: "1 / -1" }}>
-      <label style={S.label}>
-        Variation / Parallel
-        {form.variation && <span style={{ marginLeft: "0.5rem", background: "#1a1a30", border: "1px solid #5050c055", color: "#9090ee", fontSize: "0.65rem", padding: "0.1rem 0.45rem", borderRadius: "4px", fontWeight: "700", textTransform: "none" }}>{form.variation}</span>}
-      </label>
-      <input style={{ ...S.input, borderColor: form.variation ? "#5050c077" : "#2a2a3a" }} value={form.variation} onChange={e => set("variation", e.target.value)} placeholder="e.g. Magenta Sparkle Refractor, Holo Rare, 1st Edition" />
-      <div style={{ color: "#555", fontSize: "0.68rem", marginTop: "0.25rem" }}>Parallel, refractor, holo, 1st edition, color variant, print run, etc.</div>
-    </div>
-
-    {/* Grading + Grade/Condition */}
-    <div style={S.field}>
-      <label style={S.label}>Grading Org</label>
-      <select style={S.input} value={form.gradingOrg} onChange={e => set("gradingOrg", e.target.value)}>
-        {GRADING_ORGS.map(o => <option key={o}>{o}</option>)}
-      </select>
-    </div>
-    <div style={S.field}>
-      <label style={S.label}>{form.gradingOrg === "Raw" ? "Condition" : "Grade"}</label>
-      {form.gradingOrg === "Raw"
-        ? <select style={S.input} value={form.condition} onChange={e => set("condition", e.target.value)}>{CONDITIONS.map(c => <option key={c}>{c}</option>)}</select>
-        : <input style={S.input} value={form.grade} onChange={e => set("grade", e.target.value)} placeholder="e.g. 10" />}
-    </div>
-
-    {/* PSA Cert */}
-    {isPSA && (
-      <div style={{ ...S.field, gridColumn: "1 / -1" }}>
-        <label style={S.label}>PSA Cert #</label>
-        <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
-          <input style={{ ...S.input, flex: 1, borderColor: form.psaCert ? "#e8a03066" : "#2a2a3a" }}
-            value={form.psaCert} onChange={e => set("psaCert", e.target.value.replace(/\D/g, ""))}
-            placeholder="e.g. 116332079" maxLength={12} />
-          {form.psaCert && (
-            <a href={psaUrl(form.psaCert)} target="_blank" rel="noopener noreferrer"
-              style={{ background: "#1a1424", border: "1px solid #e8a03066", color: "#e8a030", borderRadius: "8px", padding: "0.55rem 0.9rem", fontSize: "0.8rem", fontWeight: "700", textDecoration: "none", whiteSpace: "nowrap" }}>
-              Verify ↗
-            </a>
-          )}
-        </div>
-        <div style={{ color: "#555", fontSize: "0.68rem", marginTop: "0.3rem" }}>Printed on your PSA slab label. "Verify" opens PSA's website to confirm authenticity.</div>
-      </div>
-    )}
-
-    {/* Prices */}
-    <div style={S.field}>
-      <label style={S.label}>Purchase Price ($)</label>
-      <input style={S.input} type="number" min="0" step="0.01" value={form.purchasePrice} onChange={e => set("purchasePrice", e.target.value)} placeholder="0.00" />
-    </div>
-    <div style={S.field}>
-      <label style={S.label}>Current Value ($)</label>
-      <div style={{ display: "flex", gap: "0.5rem" }}>
-        <input style={{ ...S.input, flex: 1 }} type="number" min="0" step="0.01" value={form.currentValue} onChange={e => set("currentValue", e.target.value)} placeholder="0.00" />
-        {canLookup && (
-          <button onClick={() => setShowLookup(v => !v)}
-            style={{ background: showLookup ? "#1a1a3a" : "none", border: "1px solid " + (showLookup ? "#7070ff" : "#4040a055"), color: "#a0a0ff", borderRadius: "8px", padding: "0 0.8rem", fontSize: "0.75rem", fontWeight: "700", cursor: "pointer", whiteSpace: "nowrap" }}>
-            AI Look Up
-          </button>
-        )}
-      </div>
-    </div>
-
-    {showLookup && canLookup && (
-      <div style={{ gridColumn: "1 / -1" }}>
-        <PriceLookupPanel card={form} onApplyValue={v => { set("currentValue", String(v)); set("valueUpdatedAt", new Date().toISOString()); }} onClose={() => setShowLookup(false)} />
-      </div>
-    )}
-
-    {/* Notes */}
-    <div style={{ ...S.field, gridColumn: "1 / -1" }}>
-      <label style={S.label}>Notes</label>
-      <textarea style={{ ...S.input, resize: "vertical", minHeight: "60px" }} value={form.notes} onChange={e => set("notes", e.target.value)} placeholder="RC, auto, relic, 1st edition, shadowless, etc." />
-    </div>
-  </div>
-
-  <div style={{ display: "flex", gap: "0.75rem", justifyContent: "flex-end" }}>
-    <button onClick={onCancel} style={{ background: "none", border: "1px solid #3a3a5a", color: "#aaa", borderRadius: "8px", padding: "0.6rem 1.2rem", cursor: "pointer" }}>Cancel</button>
-    <button onClick={() => onSave({ ...form, purchasePrice: parseFloat(form.purchasePrice) || 0, currentValue: parseFloat(form.currentValue) || 0, valueUpdatedAt: form.currentValue !== String(initial?.currentValue || "") ? new Date().toISOString() : initial?.valueUpdatedAt })}
-      style={{ background: "linear-gradient(135deg, #4040c0, #7070ff)", border: "none", color: "#fff", borderRadius: "8px", padding: "0.6rem 1.4rem", cursor: "pointer", fontWeight: "700" }}>
-      {initial ? "Save Changes" : "Add to Collection"}
-    </button>
-  </div>
-</div>
-```
-
-);
 }
 
-// ─── Card row ─────────────────────────────────────────────────────────────────
-function CardRow({ card, onEdit, onDelete, onLookup }) {
-const gain    = (card.currentValue || 0) - (card.purchasePrice || 0);
-const gainPct = card.purchasePrice ? (gain / card.purchasePrice) * 100 : 0;
-const isUp    = gain >= 0;
-const isPSA   = card.gradingOrg === “PSA”;
-const cat     = getCat(card.category);
-
-return (
-<div style={{ padding: “0.9rem 1rem 0.75rem”, background: “#13131a”, borderRadius: “10px”, border: “1px solid #1e1e2e”, marginBottom: “0.5rem”, transition: “border-color 0.2s” }}
-onMouseEnter={e => e.currentTarget.style.borderColor = “#3a3a5a”}
-onMouseLeave={e => e.currentTarget.style.borderColor = “#1e1e2e”}>
-<div style={{ display: “grid”, gridTemplateColumns: “2fr 1fr 1fr 1fr 1fr auto”, gap: “0.5rem”, alignItems: “center” }}>
-<div>
-<div style={{ color: “#f0f0f5”, fontWeight: “600”, fontSize: “0.9rem” }}>{card.player || “—”}</div>
-<div style={{ color: “#666”, fontSize: “0.72rem”, marginTop: “0.15rem” }}>
-{[card.year, card.set, card.cardNumber ? “#” + card.cardNumber : “”].filter(Boolean).join(” · “)}
-</div>
-<div style={{ display: “flex”, flexWrap: “wrap”, gap: “0.25rem”, marginTop: “0.25rem” }}>
-{cat && <span style={{ background: “#0d0d1a”, border: “1px solid #3a3a6a”, color: “#7070aa”, fontSize: “0.62rem”, padding: “0.1rem 0.45rem”, borderRadius: “4px” }}>{cat.label}</span>}
-{card.variation && <span style={{ background: “#14142a”, border: “1px solid #5050c044”, color: “#9090ee”, fontSize: “0.65rem”, padding: “0.1rem 0.45rem”, borderRadius: “4px”, fontWeight: “600” }}>{card.variation}</span>}
-{card.gradingOrg && card.gradingOrg !== “Raw” && (
-<span style={{ background: isPSA ? “#1a1424” : “#1a1a2e”, border: “1px solid “ + (isPSA ? “#c0802055” : “#4040a0”), color: isPSA ? “#e8a030” : “#8888ff”, fontSize: “0.65rem”, padding: “0.1rem 0.4rem”, borderRadius: “4px”, fontWeight: “700” }}>
-{card.gradingOrg} {card.grade}{isPSA && card.psaCert ? “ · #” + card.psaCert : “”}
-</span>
-)}
-</div>
-</div>
-<div style={{ color: “#aaa”, fontSize: “0.82rem” }}>{fmtUSD(card.purchasePrice)}</div>
-<div style={{ color: “#f0f0f5”, fontSize: “0.82rem”, fontWeight: “600” }}>{fmtUSD(card.currentValue)}</div>
-<div style={{ color: isUp ? “#4ade80” : “#f87171”, fontSize: “0.82rem”, fontWeight: “600” }}>{fmtUSD(gain)}</div>
-<div style={{ color: isUp ? “#4ade80” : “#f87171”, fontSize: “0.82rem” }}>{card.purchasePrice ? fmtPct(gainPct) : “—”}</div>
-<div style={{ display: “flex”, gap: “0.4rem” }}>
-<button onClick={() => onEdit(card)} style={{ background: “none”, border: “1px solid #3a3a5a”, color: “#aaa”, borderRadius: “6px”, padding: “0.3rem 0.55rem”, cursor: “pointer”, fontSize: “0.75rem” }}>Edit</button>
-<button onClick={() => onDelete(card.id)} style={{ background: “none”, border: “1px solid #5a2a2a”, color: “#f87171”, borderRadius: “6px”, padding: “0.3rem 0.55rem”, cursor: “pointer”, fontSize: “0.75rem” }}>✕</button>
-</div>
-</div>
-<div style={{ display: “flex”, gap: “0.5rem”, marginTop: “0.65rem”, flexWrap: “wrap”, alignItems: “center” }}>
-<button onClick={() => onLookup(card)}
-style={{ display: “inline-flex”, alignItems: “center”, gap: “0.3rem”, background: “linear-gradient(135deg, #1a1a3a, #1e1e4a)”, border: “1px solid #4040a055”, color: “#a0a0ff”, borderRadius: “6px”, padding: “0.28rem 0.7rem”, cursor: “pointer”, fontSize: “0.72rem”, fontWeight: “700” }}>
-🤖 AI Price Lookup
-</button>
-{isPSA && card.psaCert && (
-<a href={psaUrl(card.psaCert)} target=”_blank” rel=“noopener noreferrer”
-style={{ display: “inline-flex”, alignItems: “center”, background: “none”, border: “1px solid #e8a03044”, color: “#e8a030”, borderRadius: “6px”, padding: “0.28rem 0.65rem”, textDecoration: “none”, fontSize: “0.72rem”, fontWeight: “600” }}>
-PSA Cert ↗
-</a>
-)}
-{card.valueUpdatedAt && <span style={{ color: “#3a3a4a”, fontSize: “0.67rem”, marginLeft: “auto” }}>Updated {new Date(card.valueUpdatedAt).toLocaleDateString()}</span>}
-</div>
-</div>
-);
+async function doLookup(card){
+const apiKey=””; // Add your Anthropic API key here
+if(!apiKey){set({lookSt:“error”,lookErr:“Add an Anthropic API key to the app to enable AI Price Lookup.”});return;}
+try{
+const q=[card.player,card.year,card.set,card.variation,card.cardNumber?”#”+card.cardNumber:””,card.gradingOrg!==“Raw”?card.gradingOrg+” “+card.grade:””].filter(Boolean).join(” “);
+const msgs=[{role:“user”,content:`Search eBay sold prices for: "${q}". Reply ONLY with JSON: {"summary":"","prices":[{"grade":"","value":0,"source":""}],"trend":"stable","confidence":"medium"}`}];
+const tools=[{type:“web_search_20250305”,name:“web_search”}];
+for(let i=0;i<8;i++){
+const res=await fetch(“https://api.anthropic.com/v1/messages”,{method:“POST”,headers:{“Content-Type”:“application/json”,“x-api-key”:apiKey,“anthropic-version”:“2023-06-01”,“anthropic-dangerous-direct-browser-access”:“true”},body:JSON.stringify({model:“claude-sonnet-4-20250514”,max_tokens:2000,tools,messages:msgs})});
+const data=await res.json();
+if(!res.ok) throw new Error(data.error?.message||“API error”);
+msgs.push({role:“assistant”,content:data.content});
+if(data.stop_reason===“end_turn”){const text=data.content.filter(b=>b.type===“text”).map(b=>b.text).join(””);const m=text.match(/{[\s\S]*}/);if(m){set({lookSt:“done”,lookRes:JSON.parse(m[0])});return;}throw new Error(“Could not parse response”);}
+if(data.stop_reason===“tool_use”){msgs.push({role:“user”,content:data.content.filter(b=>b.type===“tool_use”).map(b=>({type:“tool_result”,tool_use_id:b.id,content:“No results.”}))});}
+else break;
+}
+throw new Error(“No response”);
+}catch(e){set({lookSt:“error”,lookErr:e.message});}
 }
 
-// ─── Main app ─────────────────────────────────────────────────────────────────
-function App() {
-const [cards,      setCards]      = useState([]);
-const [loaded,     setLoaded]     = useState(false);
-const [showForm,   setShowForm]   = useState(false);
-const [editCard,   setEditCard]   = useState(null);
-const [lookupCard, setLookupCard] = useState(null);
-const [sortKey,    setSortKey]    = useState(“player”);
-const [sortDir,    setSortDir]    = useState(1);
-const [search,     setSearch]     = useState(””);
-const [catFilter,  setCatFilter]  = useState(””);
-const [tab,        setTab]        = useState(“fund”);
+draw();
+</script>
 
-useEffect(() => {
-(async () => {
-try { const saved = localStorage.getItem(“cards-collection”); if (saved) setCards(JSON.parse(saved)); } catch {}
-setLoaded(true);
-})();
-}, []);
-useEffect(() => {
-if (!loaded) return;
-try { localStorage.setItem(“cards-collection”, JSON.stringify(cards)); } catch(e) {}
-}, [cards, loaded]);
-
-const addCard    = d  => { setCards(c => […c, { …d, id: Date.now().toString() }]); setShowForm(false); };
-const updateCard = d  => { setCards(c => c.map(x => x.id === editCard.id ? { …d, id: x.id } : x)); setEditCard(null); };
-const deleteCard = id => { if (confirm(“Remove this card?”)) setCards(c => c.filter(x => x.id !== id)); };
-const applyPrice = (cardId, price) => setCards(c => c.map(x => x.id === cardId ? { …x, currentValue: price, valueUpdatedAt: new Date().toISOString() } : x));
-
-const totalInvested = cards.reduce((s, c) => s + (c.purchasePrice || 0), 0);
-const totalValue    = cards.reduce((s, c) => s + (c.currentValue  || 0), 0);
-const totalGain     = totalValue - totalInvested;
-const totalGainPct  = totalInvested ? (totalGain / totalInvested) * 100 : 0;
-
-const sortFn  = (arr) => […arr].sort((a, b) => { const av = a[sortKey] ?? “”, bv = b[sortKey] ?? “”; return typeof av === “string” ? sortDir * av.localeCompare(bv) : sortDir * (av - bv); });
-const byGain  = (arr) => […arr].sort((a, b) => ((b.currentValue||0)-(b.purchasePrice||0)) - ((a.currentValue||0)-(a.purchasePrice||0)));
-const bestCard  = cards.length ? byGain(cards)[0]      : null;
-const worstCard = cards.length > 1 ? byGain(cards).at(-1) : null;
-
-const filtered   = sortFn(cards.filter(c =>
-(!search    || [c.player, c.year, c.set, c.variation, c.cardNumber, c.psaCert].join(” “).toLowerCase().includes(search.toLowerCase())) &&
-(!catFilter || c.category === catFilter)
-));
-const usedCats = CATEGORIES.filter(cat => cards.some(c => c.category === cat.id));
-
-const chipStyle = (active) => ({ background: active ? “#1a1a3a” : “none”, border: “1px solid “ + (active ? “#7070ff” : “#2a2a3a”), color: active ? “#a0a0ff” : “#555”, borderRadius: “20px”, padding: “0.25rem 0.85rem”, cursor: “pointer”, fontSize: “0.73rem”, fontWeight: active ? “700” : “400” });
-
-const SortBtn = ({ k, label }) => (
-<button onClick={() => { setSortKey(k); setSortDir(s => k === sortKey ? -s : 1); }}
-style={{ background: “none”, border: “none”, color: sortKey === k ? “#8888ff” : “#666”, cursor: “pointer”, fontSize: “0.72rem”, letterSpacing: “0.08em”, textTransform: “uppercase”, padding: 0 }}>
-{label}{sortKey === k ? (sortDir === 1 ? “ ↑” : “ ↓”) : “”}
-</button>
-);
-
-if (!loaded) return (
-<div style={{ minHeight: “100vh”, background: “#0a0a0f”, display: “flex”, alignItems: “center”, justifyContent: “center” }}>
-<div style={{ color: “#666”, fontFamily: “‘Bebas Neue’, cursive”, fontSize: “2rem”, letterSpacing: “0.2em” }}>LOADING…</div>
-</div>
-);
-
-return (
-<div style={{ minHeight: “100vh”, background: “#0a0a0f”, color: “#f0f0f5”, fontFamily: “‘DM Sans’, sans-serif” }}>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-
-```
-  {/* Header */}
-  <div style={{ borderBottom: "1px solid #1a1a2a", padding: "1.5rem 2rem", display: "flex", alignItems: "center", justifyContent: "space-between", background: "linear-gradient(180deg, #0d0d16 0%, #0a0a0f 100%)" }}>
-    <div>
-      <div style={{ fontFamily: "'Bebas Neue', cursive", fontSize: "2rem", letterSpacing: "0.1em", color: "#f0f0f5", lineHeight: 1 }}>CARD VAULT</div>
-      <div style={{ color: "#555", fontSize: "0.72rem", letterSpacing: "0.15em", textTransform: "uppercase", marginTop: "0.2rem" }}>{cards.length} card{cards.length !== 1 ? "s" : ""}</div>
-    </div>
-    <button onClick={() => setShowForm(true)} style={{ background: "linear-gradient(135deg, #4040c0, #7070ff)", border: "none", color: "#fff", borderRadius: "10px", padding: "0.65rem 1.4rem", cursor: "pointer", fontWeight: "700", fontSize: "0.85rem", boxShadow: "0 4px 20px rgba(100,100,255,0.3)" }}>+ Add Card</button>
-  </div>
-
-  {/* Tabs */}
-  <div style={{ display: "flex", borderBottom: "1px solid #1a1a2a", padding: "0 2rem" }}>
-    {["fund","cards","funds"].map(t => (
-      <button key={t} onClick={() => setTab(t)} style={{ background: "none", border: "none", borderBottom: "2px solid " + (tab === t ? "#7070ff" : "transparent"), color: tab === t ? "#f0f0f5" : "#666", cursor: "pointer", padding: "0.9rem 1.5rem 0.7rem", fontWeight: "600", fontSize: "0.85rem", letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: "-1px" }}>
-        {t === "fund" ? "📊 Overview" : t === "cards" ? "🃏 My Cards" : "📁 By Category"}
-      </button>
-    ))}
-  </div>
-
-  <div style={{ padding: "2rem", maxWidth: "1100px", margin: "0 auto" }}>
-
-    {/* Fund tab */}
-    {tab === "fund" && (
-      <div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "1rem", marginBottom: "2rem" }}>
-          <StatCard label="Total Invested"  value={fmtUSD(totalInvested)} accent="#7070ff" />
-          <StatCard label="Current Value"   value={fmtUSD(totalValue)}    accent="#60d0ff" />
-          <StatCard label="Total Gain/Loss" value={fmtUSD(totalGain)} sub={cards.length ? fmtPct(totalGainPct) : null} accent={totalGain >= 0 ? "#4ade80" : "#f87171"} />
-          <StatCard label="Cards Tracked"   value={cards.length}          accent="#fbbf24" />
-        </div>
-        {cards.length > 0 && (
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-            {bestCard && (
-              <div style={{ background: "#13131a", border: "1px solid #1a3a1a", borderLeft: "3px solid #4ade80", borderRadius: "12px", padding: "1.25rem 1.5rem" }}>
-                <div style={{ color: "#4ade80", fontSize: "0.7rem", letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: "0.5rem" }}>🏆 Best Performer</div>
-                <div style={{ color: "#f0f0f5", fontWeight: "700" }}>{bestCard.player}</div>
-                <div style={{ color: "#666", fontSize: "0.75rem" }}>{[bestCard.year, bestCard.set].filter(Boolean).join(" · ")}</div>
-                <div style={{ color: "#4ade80", fontSize: "0.9rem", marginTop: "0.5rem", fontWeight: "600" }}>+{fmtUSD((bestCard.currentValue||0)-(bestCard.purchasePrice||0))}</div>
-              </div>
-            )}
-            {worstCard && worstCard.id !== bestCard?.id && (
-              <div style={{ background: "#13131a", border: "1px solid #3a1a1a", borderLeft: "3px solid #f87171", borderRadius: "12px", padding: "1.25rem 1.5rem" }}>
-                <div style={{ color: "#f87171", fontSize: "0.7rem", letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: "0.5rem" }}>📉 Worst Performer</div>
-                <div style={{ color: "#f0f0f5", fontWeight: "700" }}>{worstCard.player}</div>
-                <div style={{ color: "#666", fontSize: "0.75rem" }}>{[worstCard.year, worstCard.set].filter(Boolean).join(" · ")}</div>
-                <div style={{ color: "#f87171", fontSize: "0.9rem", marginTop: "0.5rem", fontWeight: "600" }}>{fmtUSD((worstCard.currentValue||0)-(worstCard.purchasePrice||0))}</div>
-              </div>
-            )}
-          </div>
-        )}
-        {cards.length === 0 && (
-          <div style={{ textAlign: "center", padding: "4rem 2rem", color: "#444" }}>
-            <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>🃏</div>
-            <div style={{ fontFamily: "'Bebas Neue', cursive", fontSize: "1.5rem", letterSpacing: "0.1em", marginBottom: "0.5rem" }}>YOUR VAULT IS EMPTY</div>
-            <div style={{ fontSize: "0.85rem" }}>Add your first card to start tracking your collection.</div>
-          </div>
-        )}
-      </div>
-    )}
-
-    {/* Cards tab */}
-    {tab === "funds" && (
-      <div>
-        {CATEGORIES.filter(cat => cards.some(c => c.category === cat.id)).length === 0 ? (
-          <div style={{ textAlign: "center", padding: "4rem 2rem", color: "#444" }}>
-            <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>📁</div>
-            <div style={{ fontFamily: "'Bebas Neue', cursive", fontSize: "1.5rem", letterSpacing: "0.1em", marginBottom: "0.5rem" }}>NO CATEGORIES YET</div>
-            <div style={{ fontSize: "0.85rem" }}>Assign categories to your cards to see them broken out as individual funds.</div>
-          </div>
-        ) : (
-          <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-            {CATEGORIES.filter(cat => cards.some(c => c.category === cat.id)).map(cat => {
-              const catCards = cards.filter(c => c.category === cat.id);
-              const invested = catCards.reduce((s, c) => s + (c.purchasePrice || 0), 0);
-              const value    = catCards.reduce((s, c) => s + (c.currentValue  || 0), 0);
-              const gain     = value - invested;
-              const gainPct  = invested ? (gain / invested) * 100 : 0;
-              const isUp     = gain >= 0;
-              const best     = [...catCards].sort((a,b) => ((b.currentValue||0)-(b.purchasePrice||0)) - ((a.currentValue||0)-(a.purchasePrice||0)))[0];
-              return (
-                <div key={cat.id} style={{ background: "#13131a", border: "1px solid #1e1e2e", borderRadius: "14px", padding: "1.25rem 1.5rem" }}>
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1rem" }}>
-                    <div style={{ fontFamily: "'Bebas Neue', cursive", fontSize: "1.3rem", letterSpacing: "0.08em", color: "#f0f0f5" }}>{cat.label}</div>
-                    <div style={{ color: "#555", fontSize: "0.75rem" }}>{catCards.length} card{catCards.length !== 1 ? "s" : ""}</div>
-                  </div>
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "0.6rem", marginBottom: "1rem" }}>
-                    <div style={{ background: "#0d0d14", borderRadius: "8px", padding: "0.65rem 0.85rem" }}>
-                      <div style={{ color: "#666", fontSize: "0.65rem", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "0.25rem" }}>Invested</div>
-                      <div style={{ color: "#f0f0f5", fontSize: "0.95rem", fontWeight: "700" }}>{fmtUSD(invested)}</div>
-                    </div>
-                    <div style={{ background: "#0d0d14", borderRadius: "8px", padding: "0.65rem 0.85rem" }}>
-                      <div style={{ color: "#666", fontSize: "0.65rem", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "0.25rem" }}>Value</div>
-                      <div style={{ color: "#f0f0f5", fontSize: "0.95rem", fontWeight: "700" }}>{fmtUSD(value)}</div>
-                    </div>
-                    <div style={{ background: "#0d0d14", borderRadius: "8px", padding: "0.65rem 0.85rem" }}>
-                      <div style={{ color: "#666", fontSize: "0.65rem", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "0.25rem" }}>Gain/Loss</div>
-                      <div style={{ color: isUp ? "#4ade80" : "#f87171", fontSize: "0.95rem", fontWeight: "700" }}>{fmtUSD(gain)}</div>
-                    </div>
-                    <div style={{ background: "#0d0d14", borderRadius: "8px", padding: "0.65rem 0.85rem" }}>
-                      <div style={{ color: "#666", fontSize: "0.65rem", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "0.25rem" }}>Return</div>
-                      <div style={{ color: isUp ? "#4ade80" : "#f87171", fontSize: "0.95rem", fontWeight: "700" }}>{invested ? fmtPct(gainPct) : "—"}</div>
-                    </div>
-                  </div>
-                  {best && (
-                    <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", borderTop: "1px solid #1e1e2e", paddingTop: "0.75rem" }}>
-                      <span style={{ color: "#555", fontSize: "0.72rem" }}>Best:</span>
-                      <span style={{ color: "#f0f0f5", fontSize: "0.78rem", fontWeight: "600" }}>{best.player}</span>
-                      <span style={{ color: "#555", fontSize: "0.72rem" }}>{[best.year, best.set].filter(Boolean).join(" · ")}</span>
-                      <span style={{ color: "#4ade80", fontSize: "0.78rem", fontWeight: "600", marginLeft: "auto" }}>+{fmtUSD((best.currentValue||0)-(best.purchasePrice||0))}</span>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-            {cards.some(c => !c.category) && (() => {
-              const uncatCards = cards.filter(c => !c.category);
-              const invested   = uncatCards.reduce((s, c) => s + (c.purchasePrice || 0), 0);
-              const value      = uncatCards.reduce((s, c) => s + (c.currentValue  || 0), 0);
-              const gain       = value - invested;
-              const gainPct    = invested ? (gain / invested) * 100 : 0;
-              const isUp       = gain >= 0;
-              return (
-                <div style={{ background: "#13131a", border: "1px solid #1e1e2e", borderRadius: "14px", padding: "1.25rem 1.5rem", opacity: 0.7 }}>
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1rem" }}>
-                    <div style={{ fontFamily: "'Bebas Neue', cursive", fontSize: "1.3rem", letterSpacing: "0.08em", color: "#888" }}>Uncategorized</div>
-                    <div style={{ color: "#555", fontSize: "0.75rem" }}>{uncatCards.length} card{uncatCards.length !== 1 ? "s" : ""}</div>
-                  </div>
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "0.6rem" }}>
-                    <div style={{ background: "#0d0d14", borderRadius: "8px", padding: "0.65rem 0.85rem" }}>
-                      <div style={{ color: "#666", fontSize: "0.65rem", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "0.25rem" }}>Invested</div>
-                      <div style={{ color: "#888", fontSize: "0.95rem", fontWeight: "700" }}>{fmtUSD(invested)}</div>
-                    </div>
-                    <div style={{ background: "#0d0d14", borderRadius: "8px", padding: "0.65rem 0.85rem" }}>
-                      <div style={{ color: "#666", fontSize: "0.65rem", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "0.25rem" }}>Value</div>
-                      <div style={{ color: "#888", fontSize: "0.95rem", fontWeight: "700" }}>{fmtUSD(value)}</div>
-                    </div>
-                    <div style={{ background: "#0d0d14", borderRadius: "8px", padding: "0.65rem 0.85rem" }}>
-                      <div style={{ color: "#666", fontSize: "0.65rem", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "0.25rem" }}>Gain/Loss</div>
-                      <div style={{ color: isUp ? "#4ade80" : "#f87171", fontSize: "0.95rem", fontWeight: "700" }}>{fmtUSD(gain)}</div>
-                    </div>
-                    <div style={{ background: "#0d0d14", borderRadius: "8px", padding: "0.65rem 0.85rem" }}>
-                      <div style={{ color: "#666", fontSize: "0.65rem", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "0.25rem" }}>Return</div>
-                      <div style={{ color: isUp ? "#4ade80" : "#f87171", fontSize: "0.95rem", fontWeight: "700" }}>{invested ? fmtPct(gainPct) : "—"}</div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })()}
-          </div>
-        )}
-      </div>
-    )}
-
-    {tab === "cards" && (
-      <div>
-        {usedCats.length > 0 && (
-          <div style={{ display: "flex", gap: "0.4rem", flexWrap: "wrap", marginBottom: "0.85rem" }}>
-            <button onClick={() => setCatFilter("")} style={chipStyle(!catFilter)}>All</button>
-            {usedCats.map(cat => (
-              <button key={cat.id} onClick={() => setCatFilter(catFilter === cat.id ? "" : cat.id)} style={chipStyle(catFilter === cat.id)}>
-                {cat.label}
-              </button>
-            ))}
-          </div>
-        )}
-        <div style={{ display: "flex", gap: "1rem", marginBottom: "1.25rem", alignItems: "center" }}>
-          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search player, set, year, variation, PSA cert…"
-            style={{ flex: 1, background: "#13131a", border: "1px solid #2a2a3a", borderRadius: "8px", padding: "0.6rem 1rem", color: "#f0f0f5", fontSize: "0.88rem", outline: "none" }} />
-          <div style={{ color: "#555", fontSize: "0.75rem", whiteSpace: "nowrap" }}>{filtered.length} result{filtered.length !== 1 ? "s" : ""}</div>
-        </div>
-        {filtered.length > 0 && (
-          <>
-            <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr 1fr auto", gap: "0.5rem", padding: "0.4rem 1rem", marginBottom: "0.25rem" }}>
-              <SortBtn k="player"        label="Card"   />
-              <SortBtn k="purchasePrice" label="Cost"   />
-              <SortBtn k="currentValue"  label="Value"  />
-              <SortBtn k="currentValue"  label="Gain $" />
-              <div style={{ color: "#555", fontSize: "0.72rem", textTransform: "uppercase" }}>Gain %</div>
-              <div />
-            </div>
-            {filtered.map(card => <CardRow key={card.id} card={card} onEdit={setEditCard} onDelete={deleteCard} onLookup={setLookupCard} />)}
-          </>
-        )}
-        {filtered.length === 0 && (
-          <div style={{ textAlign: "center", padding: "4rem 2rem", color: "#444" }}>
-            <div style={{ fontSize: "2rem", marginBottom: "0.75rem" }}>🔍</div>
-            <div style={{ fontFamily: "'Bebas Neue', cursive", fontSize: "1.3rem", letterSpacing: "0.1em" }}>{search || catFilter ? "NO MATCHING CARDS" : "NO CARDS YET"}</div>
-            {!search && !catFilter && <div style={{ fontSize: "0.85rem", marginTop: "0.4rem" }}>Click "+ Add Card" to get started.</div>}
-          </div>
-        )}
-      </div>
-    )}
-  </div>
-
-  {showForm   && <Modal onClose={() => setShowForm(false)}  wide><CardForm onSave={addCard}   onCancel={() => setShowForm(false)}  /></Modal>}
-  {editCard   && <Modal onClose={() => setEditCard(null)}   wide><CardForm initial={editCard} onSave={updateCard} onCancel={() => setEditCard(null)} /></Modal>}
-  {lookupCard && <PriceLookupModal card={lookupCard} onApplyValue={applyPrice} onClose={() => setLookupCard(null)} />}
-</div>
-```
-
-);
-}
-
-```
-// ── MOUNT ──────────────────────────────────────────────────────────────────
-const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(<App />);
-```
-
-  </script>
 </body>
 </html>
